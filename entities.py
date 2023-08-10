@@ -43,6 +43,9 @@ class Component:
             for component in components:
                 if component.isDrawableComponent:
                     component.graphicalRepresentation.position = screenCenter
+                    #component.graphicalRepresentation.position = Point(2, 2)
+
+
             ev = screen.get_key()
             if ev in (ord('W'), ord('w')):
                 CAMERA_POINT.y += int(self.getProperty("speed").value)
@@ -55,27 +58,49 @@ class Component:
                 return
             if ev in (ord('D'), ord('d')):
                 CAMERA_POINT.x -= int(self.getProperty("speed").value)
-                returndddd
+                return
             if ev in (ord('Q'), ord('q')):
                 screen.close()
                 exit()
         elif self.definition.format == "AsciiMapInformationComponent":
             # print debug information
-            screen.print_at("GLOBAL="+str(GLOBAL_POINT), 0, 0, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
-            screen.print_at("CAMERA="+str(CAMERA_POINT), 0, 1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
-            screen.print_at("CENTER="+str(self.getScreenCenter(screen)), 0, 2, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            screen.print_at("GLOBAL="+str(GLOBAL_POINT), 0, 1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            screen.print_at("CAMERA="+str(CAMERA_POINT), 0, 2, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            screen.print_at("CENTER="+str(self.getScreenCenter(screen)), 0, 3, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            drawnPoint = Point(math.floor(screen.height / SCALE), math.floor(screen.width / SCALE))
+            screen.print_at("RATIO="+str(screen.height / screen.width), 0, 4, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            screen.print_at("TILE LENGTH="+str(drawnPoint), 0, 5, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
 
             # print selected component
+            screenCenter = self.getScreenCenter(screen)
+            entityInPosition = self.getEntityInPosition(entities, screenCenter)
+            if entityInPosition is not None and entityInPosition.getComponent("MapMakerInputComponent") is None:
+                screen.print_at(""+str(entityInPosition), 0, screen.height-1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            else:
+                screen.print_at("empty", 0, screen.height-1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
 
     def getScreenCenter(self, screen):
-            screenCenterX = round(screen.height / 2 * SCALE) + 1
-            screenCenterY = round(screen.height / 2 * SCALE) + 1
-            return Point(screenCenterX, screenCenterY)
+            ratio = screen.width / screen.height
+            screenCenterX = round(screen.height / (2 * SCALE)) * 2 - CAMERA_POINT.x
+            screenCenterY = round(screen.width / ((2*ratio) * SCALE)) - CAMERA_POINT.y
+            trueScreenCenter = Point(screenCenterX, screenCenterY)
+            return trueScreenCenter
+    
     def getProperty(self, name):
         for property in self.properties:
             if property.name == name:
                 return property
         return None
+
+    def getEntityInPosition(self, entities, position):
+        for entity in entities:
+            gameObjectComponent = entity.getComponentByFormat("GameObjectComponent")
+            if gameObjectComponent is not None:
+                gocPosition = vector3ToPoint(gameObjectComponent.getProperty("position").value)
+                if gocPosition.x == position.x and gocPosition.y == position.y:
+                    return entity
+        return None
+
 
     def __str__(self):
         result = "Component{type="+self.definition.format+", properties.amount="+str(len(self.properties))+", isDrawableComponent="+str(self.isDrawableComponent)
@@ -85,13 +110,8 @@ class Component:
     
     def draw(self, screen, position, entities, parentEntity, components):
         if self.isDrawableComponent:
-            if self.definition.format == "MapMakerInputComponent":
-                relativePoint = Point(CAMERA_POINT.x+self.graphicalRepresentation.position.x, CAMERA_POINT.y+self.graphicalRepresentation.position.y)
-            else:
-                relativePoint = Point(position.x+self.graphicalRepresentation.position.x, position.y+self.graphicalRepresentation.position.y)
-            self.graphicalRepresentation.draw(relativePoint, screen)
-        else:
-            self.update(screen, position, entities, parentEntity, components)
+            self.graphicalRepresentation.draw(position, screen)
+        self.update(screen, position, entities, parentEntity, components)
     
 
 class Entity:
@@ -111,6 +131,14 @@ class Entity:
             if component.definition.name == name:
                 return component
         return None
+    
+            
+    def getComponentByFormat(self, name):
+        for component in self.components:
+            if component.definition.format == name:
+                return component
+        return None
+
 
 
 def getFactoryFromEntityNode(factories, entityNode):

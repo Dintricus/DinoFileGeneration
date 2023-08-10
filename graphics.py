@@ -6,6 +6,7 @@ import math
 import logging
 
 # CHARACTER MATRICES
+EMPTY_STRING = [""]
 ASCII_REPRESENTATIONS = {
     "NOTHING": [[]],
     "TEST": [
@@ -15,10 +16,10 @@ ASCII_REPRESENTATIONS = {
         ["\\", "=", "=", "/"],
     ],
     "CURSOR": [
-        [" ", " ", " ", " "],
-        [" ", "/", "\\", " "],
-        [" ", "\\", "/", " "],
-        [" ", " ", " ", " "],
+        ["", "", "", ""],
+        ["", "/", "\\", ""],
+        ["", "\\", "/", ""],
+        ["", "", "", ""],
     ]
 }
 
@@ -41,9 +42,9 @@ class Point:
         return "Point{x="+str(self.x)+", y="+str(self.y)+"}"
 
 # START OF GRAPHICAL REPRESENTATION GLOBAL VARIABLES
-GLOBAL_POINT = Point(round(sys.maxsize/2), round(sys.maxsize/2))
-#GLOBAL_POINT = Point(0, 0)
-CAMERA_POINT = Point(12, 12)    # TOP LEFT CORNER OF THE WINDOW
+#GLOBAL_POINT = Point(round(sys.maxsize/2), round(sys.maxsize/2))
+GLOBAL_POINT = Point(0, 0)
+CAMERA_POINT = Point(0, 0)    # TOP LEFT CORNER OF THE WINDOW
 GLOBAL_BACKGROUND = Screen.COLOUR_BLACK
 GLOBAL_FOREGROUND = Screen.COLOUR_WHITE
 SCREEN_HEIGHT = 50
@@ -58,6 +59,9 @@ class GraphicalRepresentation:
         self.background = background
 
     def draw(self, position, screen):
+        # position = current camera
+        # self.position = global position
+        '''
         x = (position.x + self.position.x) * SCALE
         y = (position.y + self.position.y) * SCALE
         for column in self.characterMatrix:
@@ -66,7 +70,18 @@ class GraphicalRepresentation:
                 screen.print_at(cell, x, y, self.color, self.background)
                 x += 1
             y += 1
+        '''
+        globalPosition = self.position
+        y = (globalPosition.y + position.y) * SCALE
+        for column in self.characterMatrix:
+            x = (globalPosition.x + position.x) * SCALE
+            for cell in column:
+                if not EMPTY_STRING.__contains__(cell):
+                    screen.print_at(cell, x, y, self.color, self.background)
+                x += 1
+            y += 1
     
+
     def move(self, x, y):
         self.position.x += x
         self.position.y += y
