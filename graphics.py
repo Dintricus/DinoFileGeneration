@@ -2,6 +2,7 @@ from random import randint
 from asciimatics.screen import Screen
 import time
 import sys
+import math
 import logging
 
 # CHARACTER MATRICES
@@ -40,8 +41,9 @@ class Point:
         return "Point{x="+str(self.x)+", y="+str(self.y)+"}"
 
 # START OF GRAPHICAL REPRESENTATION GLOBAL VARIABLES
-GLOBAL_POINT = Point(0, 0)
-CAMERA_POINT = Point(0, 0)
+GLOBAL_POINT = Point(round(sys.maxsize/2), round(sys.maxsize/2))
+#GLOBAL_POINT = Point(0, 0)
+CAMERA_POINT = Point(12, 12)    # TOP LEFT CORNER OF THE WINDOW
 GLOBAL_BACKGROUND = Screen.COLOUR_BLACK
 GLOBAL_FOREGROUND = Screen.COLOUR_WHITE
 SCREEN_HEIGHT = 50

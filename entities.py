@@ -1,5 +1,5 @@
 import math
-from graphics import Point, getAsciiRepresentation, print_entities_test,GraphicalRepresentation, draw_entities, CAMERA_POINT, SCALE
+from graphics import Point, getAsciiRepresentation, print_entities_test,GraphicalRepresentation, draw_entities, GLOBAL_POINT, CAMERA_POINT, SCALE
 from asciimatics.screen import Screen
 from file_processing import *
 import logging
@@ -34,18 +34,15 @@ class Component:
         # Here is where you implement what each component does.
         pass
 
-    def update(self, screen, entities, parentEntity, components):
+    def update(self, screen, position, entities, parentEntity, components):
         # MAIN LOGIC COMPONENT
         # Here is where you implement what each component does.
         if self.definition.format == "MapMakerInputComponent":
-            screenCenterX = round(screen.height / (2*SCALE)) + 1
-            screenCenterY = round(screen.height / (4*SCALE)) + 1
-            screenCenter = Point(screenCenterX, screenCenterY)
+            screenCenter = self.getScreenCenter(screen)
             logging.debug("screenCenter="+str(screenCenter))
             for component in components:
                 if component.isDrawableComponent:
                     component.graphicalRepresentation.position = screenCenter
-            
             ev = screen.get_key()
             if ev in (ord('W'), ord('w')):
                 CAMERA_POINT.y += int(self.getProperty("speed").value)
@@ -58,11 +55,22 @@ class Component:
                 return
             if ev in (ord('D'), ord('d')):
                 CAMERA_POINT.x -= int(self.getProperty("speed").value)
-                return
+                returndddd
             if ev in (ord('Q'), ord('q')):
                 screen.close()
                 exit()
+        elif self.definition.format == "AsciiMapInformationComponent":
+            # print debug information
+            screen.print_at("GLOBAL="+str(GLOBAL_POINT), 0, 0, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            screen.print_at("CAMERA="+str(CAMERA_POINT), 0, 1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            screen.print_at("CENTER="+str(self.getScreenCenter(screen)), 0, 2, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
 
+            # print selected component
+
+    def getScreenCenter(self, screen):
+            screenCenterX = round(screen.height / 2 * SCALE) + 1
+            screenCenterY = round(screen.height / 2 * SCALE) + 1
+            return Point(screenCenterX, screenCenterY)
     def getProperty(self, name):
         for property in self.properties:
             if property.name == name:
@@ -83,7 +91,7 @@ class Component:
                 relativePoint = Point(position.x+self.graphicalRepresentation.position.x, position.y+self.graphicalRepresentation.position.y)
             self.graphicalRepresentation.draw(relativePoint, screen)
         else:
-            self.update(screen, entities, parentEntity, components)
+            self.update(screen, position, entities, parentEntity, components)
     
 
 class Entity:
