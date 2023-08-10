@@ -67,7 +67,7 @@ class Component:
             screen.print_at("GLOBAL="+str(GLOBAL_POINT), 0, 1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
             screen.print_at("CAMERA="+str(CAMERA_POINT), 0, 2, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
             screen.print_at("CENTER="+str(self.getScreenCenter(screen)), 0, 3, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
-            drawnPoint = Point(math.floor(screen.height / SCALE), math.floor(screen.width / SCALE))
+            drawnPoint = Point(math.floor(screen.width / SCALE), math.floor(screen.height / SCALE))
             screen.print_at("RATIO="+str(screen.height / screen.width), 0, 4, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
             screen.print_at("TILE LENGTH="+str(drawnPoint), 0, 5, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
 
@@ -81,8 +81,8 @@ class Component:
 
     def getScreenCenter(self, screen):
             ratio = screen.width / screen.height
-            screenCenterX = round(screen.height / (2 * SCALE)) * 2 - CAMERA_POINT.x
-            screenCenterY = round(screen.width / ((2*ratio) * SCALE)) - CAMERA_POINT.y
+            screenCenterX = round(screen.width / ((2) * SCALE)) - CAMERA_POINT.x - 1
+            screenCenterY = round(screen.height / ((2) * SCALE)) - CAMERA_POINT.y - 1
             trueScreenCenter = Point(screenCenterX, screenCenterY)
             return trueScreenCenter
     
