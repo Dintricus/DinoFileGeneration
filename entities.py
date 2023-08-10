@@ -1,5 +1,6 @@
 import math
 from graphics import Point, getAsciiRepresentation, print_entities_test,GraphicalRepresentation, draw_entities, GLOBAL_POINT, CAMERA_POINT, SCALE
+from entity_logic import *
 from asciimatics.screen import Screen
 from file_processing import *
 import logging
@@ -19,6 +20,13 @@ class Component:
         self.initializeGraphicalRepresentationIfDrawable()
         self.start()
 
+    def clone(self):
+        clonedProperties = []
+        for property in self.properties:
+            clonedProperties.append(property.clone())
+        result = Component(self.definition.clone(), clonedProperties)
+        return result
+
     def initializeGraphicalRepresentationIfDrawable(self):
         if self.isDrawableComponent:
             graphicalRepresentation = GraphicalRepresentation(
@@ -32,36 +40,43 @@ class Component:
     def start(self):
         # MAIN LOGIC COMPONENT
         # Here is where you implement what each component does.
-        pass
+        self.cloneEntity = None
 
     def update(self, screen, position, entities, parentEntity, components):
         # MAIN LOGIC COMPONENT
         # Here is where you implement what each component does.
         if self.definition.format == "MapMakerInputComponent":
+            # UPDATE CURSOR POSITION
             screenCenter = self.getScreenCenter(screen)
-            logging.debug("screenCenter="+str(screenCenter))
             for component in components:
                 if component.isDrawableComponent:
                     component.graphicalRepresentation.position = screenCenter
                     #component.graphicalRepresentation.position = Point(2, 2)
-
-
-            ev = screen.get_key()
-            if ev in (ord('W'), ord('w')):
-                CAMERA_POINT.y += int(self.getProperty("speed").value)
-                return
-            if ev in (ord('S'), ord('s')):
-                CAMERA_POINT.y -= int(self.getProperty("speed").value)
-                return
-            if ev in (ord('A'), ord('a')):
-                CAMERA_POINT.x += int(self.getProperty("speed").value)
-                return
-            if ev in (ord('D'), ord('d')):
-                CAMERA_POINT.x -= int(self.getProperty("speed").value)
-                return
-            if ev in (ord('Q'), ord('q')):
-                screen.close()
-                exit()
+            
+            # UPDATE CLONE WINDOW
+            if self.cloneEntity is not None:
+                self.cloneEntity.update(screen, entities, self, components)
+            else:
+                # INTERPRET INPUT
+                ev = screen.get_key()
+                if ev in (ord('W'), ord('w')):
+                    CAMERA_POINT.y += int(self.getProperty("speed").value)
+                    return
+                if ev in (ord('S'), ord('s')):
+                    CAMERA_POINT.y -= int(self.getProperty("speed").value)
+                    return
+                if ev in (ord('A'), ord('a')):
+                    CAMERA_POINT.x += int(self.getProperty("speed").value)
+                    return
+                if ev in (ord('D'), ord('d')):
+                    CAMERA_POINT.x -= int(self.getProperty("speed").value)
+                    return
+                if ev in (ord('C'), ord('c')):
+                    #TODO NEW ENTITY OPTION SCREEN
+                    self.cloneEntity = CloneEntity(screenCenter, Point(0, 0), Point(math.floor(screen.width / SCALE), math.floor(screen.height / SCALE)))
+                if ev in (ord('Q'), ord('q')):
+                    screen.close()
+                    exit()
         elif self.definition.format == "AsciiMapInformationComponent":
             # print debug information
             screen.print_at("GLOBAL="+str(GLOBAL_POINT), 0, 1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
@@ -80,7 +95,6 @@ class Component:
                 screen.print_at("empty", 0, screen.height-1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
 
     def getScreenCenter(self, screen):
-            ratio = screen.width / screen.height
             screenCenterX = round(screen.width / ((2) * SCALE)) - CAMERA_POINT.x - 1
             screenCenterY = round(screen.height / ((2) * SCALE)) - CAMERA_POINT.y - 1
             trueScreenCenter = Point(screenCenterX, screenCenterY)
@@ -100,7 +114,6 @@ class Component:
                 if gocPosition.x == position.x and gocPosition.y == position.y:
                     return entity
         return None
-
 
     def __str__(self):
         result = "Component{type="+self.definition.format+", properties.amount="+str(len(self.properties))+", isDrawableComponent="+str(self.isDrawableComponent)
@@ -131,14 +144,19 @@ class Entity:
             if component.definition.name == name:
                 return component
         return None
-    
             
     def getComponentByFormat(self, name):
         for component in self.components:
             if component.definition.format == name:
                 return component
         return None
-
+    
+    def clone(self):
+        clonedComponents = []
+        for component in self.components:
+            clonedComponents.append(component.clone())
+        result = Entity(self.definition.clone(), clonedComponents)
+        return result
 
 
 def getFactoryFromEntityNode(factories, entityNode):

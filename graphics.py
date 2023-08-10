@@ -40,6 +40,12 @@ class Point:
     
     def __str__(self):
         return "Point{x="+str(self.x)+", y="+str(self.y)+"}"
+    
+    def asTurtle(self):
+        return (self.x, self.y)
+    
+    def clone(self):
+        return Point(self.x, self.y)
 
 # START OF GRAPHICAL REPRESENTATION GLOBAL VARIABLES
 #GLOBAL_POINT = Point(round(sys.maxsize/2), round(sys.maxsize/2))
@@ -49,6 +55,7 @@ GLOBAL_BACKGROUND = Screen.COLOUR_BLACK
 GLOBAL_FOREGROUND = Screen.COLOUR_WHITE
 SCREEN_HEIGHT = 50
 SCREEN_WIDTH = 50
+GLOBAL_SLEEP_TIME = 0.05
 # END OF GRAPHICAL REPRESENTATION GLOBAL VARIABLES
 
 class GraphicalRepresentation:
@@ -61,16 +68,6 @@ class GraphicalRepresentation:
     def draw(self, position, screen):
         # position = current camera
         # self.position = global position
-        '''
-        x = (position.x + self.position.x) * SCALE
-        y = (position.y + self.position.y) * SCALE
-        for column in self.characterMatrix:
-            x = (position.x + self.position.x) * SCALE
-            for cell in column:
-                screen.print_at(cell, x, y, self.color, self.background)
-                x += 1
-            y += 1
-        '''
         globalPosition = self.position
         y = (globalPosition.y + position.y) * SCALE
         for column in self.characterMatrix:
@@ -88,6 +85,19 @@ class GraphicalRepresentation:
 
     def __str__(self):
         return "GraphicalRepresentation{position="+str(self.position)+", characterMatrix="+str(self.characterMatrix)+", color="+str(self.color)+", background+"+str(self.background)+"}"
+
+
+def draw_square(screen, relativeTo, windowPosition, windowSize, color, background):
+        globalPosition = windowPosition
+        y = (globalPosition.y + windowPosition.y) * SCALE
+        for column in range(0, windowSize.y):
+            x = (globalPosition.x + windowPosition.x) * SCALE
+            for cell in range(0, windowSize.x):
+                if not EMPTY_STRING.__contains__(cell):
+                    screen.print_at(" ", x, y, color, background)
+                x += 1
+            y += 1
+
 
 def ascii_hello_world(screen):
     while True:
@@ -151,7 +161,7 @@ def print_entities_test(screen, entities):
 
 
 def logInformation(entities, screen):
-    logging.debug("CAMERA_POINT="+str(CAMERA_POINT))
+    pass
 
 def draw_entities(entities, screen):
     screen.clear()
@@ -160,7 +170,7 @@ def draw_entities(entities, screen):
         for entity in entities:
             #logging.debug("Drawing "+str(entity)+".")
             entity.draw(screen, Point(CAMERA_POINT.x, CAMERA_POINT.y), entities, entity, entity.components)
-        time.sleep(0.01)
+        time.sleep(GLOBAL_SLEEP_TIME)
         screen.refresh()
         screen.clear_buffer(fg=GLOBAL_FOREGROUND, attr=Screen.A_NORMAL, bg=GLOBAL_BACKGROUND)
         logInformation(entities, screen)

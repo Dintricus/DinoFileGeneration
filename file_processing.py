@@ -35,6 +35,18 @@ class Definition:
         for child in self.children:
             result += child.getDepthChildrenLen()
         return result
+    
+    def clone(self):
+        clonedChildren = []
+        clonedDefinitions = []
+        for child in self.children:
+            clonedChildren.append(child.clone())
+        for child in self.definitions:
+            clonedDefinitions.append(child.clone())
+        result = Definition(self.metaName, self.name, self.description, self.format, self.value)
+        result.children = clonedChildren
+        result.definitions = clonedDefinitions
+        return result
 
 class Node:
     def __init__(self, metaDefinition, definitions, children):
