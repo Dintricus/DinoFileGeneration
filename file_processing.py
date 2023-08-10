@@ -1,4 +1,6 @@
-import xml.etree.ElementTree as xml
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+import xml.dom.minidom
 from asciimatics.screen import Screen
 from graphics import print_nodes
 import logging
@@ -47,6 +49,14 @@ class Definition:
         result.children = clonedChildren
         result.definitions = clonedDefinitions
         return result
+    
+    def toXML(self, root, parent):
+        result = ET.SubElement(parent, self.metaName)
+        result.set('name', self.name)
+        result.set('description', self.description)
+        result.set('format', self.format)
+        result.set('value', self.value)
+        return result
 
 class Node:
     def __init__(self, metaDefinition, definitions, children):
@@ -75,11 +85,31 @@ class Node:
             definition = self.getDefinition(factoryDef.name)
             if definition is None or not factoryDef.isMatch(definition): return False
         return True
+    
+    def toXML(self, root, parent):
+        result = ET.SubElement(parent, self.metaDefinition.metaName)
+        result.set('name', self.metaDefinition.name)
+        result.set('description', self.metaDefinition.description)
+        result.set('format', self.metaDefinition.format)
+        result.set('value', self.metaDefinition.value)
+        for definition in self.definitions: definition.toXML(root, result)
+        for child in self.children: child.toXML(root, result)
+        return result
 
 def readXML(filepath):
-    with open(filepath) as file:
-        result = xml.parse(file)
+    result = ET.parse(filepath)
     return result
+
+def writeXML(filepath, root):
+    root.write(filepath)
+        
+
+def writeNodesToXML(filepath, nodes):
+    root = minidom.Document()
+    root = ET.Element("xml")
+    for node in nodes:
+        node.toXML(root, root)
+    writeXML(filepath, ET.ElementTree(root))
 
 def createDefinitionFromXML(currentXMLNode):
     return Definition(
@@ -135,6 +165,10 @@ def test_file_generation(screen):
         time.sleep(0.1)
     '''
     print_nodes(screen, nodes)
+    logger.debug("Writing generated elements to same test file.")
+    writeNodesToXML(TEST_FILE_PATH, nodes)
+    logger.debug("Finished writting to test file.")
+
 
 if __name__ == "__main__":
     Screen.wrapper(test_file_generation)

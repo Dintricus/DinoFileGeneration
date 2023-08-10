@@ -1,5 +1,6 @@
 import math
-from graphics import Point, getAsciiRepresentation, print_entities_test,GraphicalRepresentation, draw_entities, GLOBAL_POINT, CAMERA_POINT, SCALE
+from graphics import Point, print_entities_test,GraphicalRepresentation, draw_entities, GLOBAL_POINT, CAMERA_POINT, SCALE
+from ascii_graphics import getAsciiRepresentation
 from entity_logic import *
 from asciimatics.screen import Screen
 from file_processing import *
@@ -26,6 +27,9 @@ class Component:
             clonedProperties.append(property.clone())
         result = Component(self.definition.clone(), clonedProperties)
         return result
+    
+    def toNode(self):
+        return Node(self.definition, self.properties, [])
 
     def initializeGraphicalRepresentationIfDrawable(self):
         if self.isDrawableComponent:
@@ -84,13 +88,14 @@ class Component:
             screen.print_at("CENTER="+str(self.getScreenCenter(screen)), 0, 3, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
             drawnPoint = Point(math.floor(screen.width / SCALE), math.floor(screen.height / SCALE))
             screen.print_at("RATIO="+str(screen.height / screen.width), 0, 4, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
-            screen.print_at("TILE LENGTH="+str(drawnPoint), 0, 5, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            screen.print_at("ENTITIES="+str(len(entities)), 0, 5, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+            screen.print_at("TILE LENGTH="+str(drawnPoint), 0, 6, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
 
             # print selected component
             screenCenter = self.getScreenCenter(screen)
             entityInPosition = self.getEntityInPosition(entities, screenCenter)
             if entityInPosition is not None and entityInPosition.getComponent("MapMakerInputComponent") is None:
-                screen.print_at(""+str(entityInPosition), 0, screen.height-1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
+                screen.print_at(""+str(entityInPosition.definition.name), 0, screen.height-1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
             else:
                 screen.print_at("empty", 0, screen.height-1, Screen.COLOUR_WHITE, Screen.COLOUR_BLACK)
 
@@ -135,6 +140,12 @@ class Entity:
     def __str__(self):
         return "Entity{definition="+str(self.definition)+", components.amount="+str(len(self.components))+"}"
     
+    def toNode(self):
+        nodeComponents = []
+        for component in self.components:
+            nodeComponents.append(component.toNode())
+        return Node(self.definition, [], nodeComponents)
+
     def draw(self, screen, position, entities, parentEntity, components):
         for component in self.components:
             component.draw(screen, position, entities, parentEntity, components)
@@ -214,7 +225,7 @@ def test_element_generation(screen):
     print_nodes(screen, nodes)
     print("\n")
     entities = generateEntitiesFromNodes(nodes)
-    logging.info("GENERATED ENTITIES: ")
+    logging.debug("GENERATED ENTITIES: ")
     print_entities_test(screen, entities)
     draw_entities(entities, screen)
 

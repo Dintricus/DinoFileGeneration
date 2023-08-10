@@ -33,7 +33,7 @@ class CloneEntity:
 		newEntity = entity.clone()
 		goc = newEntity.getComponent("GameObjectComponent")
 		if goc is not None:
-			goc.graphicalRepresentation.position = position.clone()
+			newEntity.getComponent("GameObjectComponent").graphicalRepresentation.position = position.clone()
 		entities.append(newEntity)
 		pass
 

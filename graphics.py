@@ -7,25 +7,6 @@ import logging
 
 # CHARACTER MATRICES
 EMPTY_STRING = [""]
-ASCII_REPRESENTATIONS = {
-    "NOTHING": [[]],
-    "TEST": [
-        ["/", "=", "=", "\\"],
-        ["|", "T", "E", "|"],
-        ["|", "S", "T", "|"],
-        ["\\", "=", "=", "/"],
-    ],
-    "CURSOR": [
-        ["", "", "", ""],
-        ["", "/", "\\", ""],
-        ["", "\\", "/", ""],
-        ["", "", "", ""],
-    ]
-}
-
-def getAsciiRepresentation(name):
-    return ASCII_REPRESENTATIONS.get(name)
-
 
 SCALE = 4 # 1 SQUARE = 4X4 MATRIX
 
