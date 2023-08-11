@@ -1,33 +1,18 @@
 from asciimatics.screen import Screen
-from graphics import draw_square, CAMERA_POINT, GLOBAL_SLEEP_TIME
+from graphics import draw_square, CAMERA_POINT, GLOBAL_SLEEP_TIME, Window
 from entities import Point
+from file_processing import writeNodesToXML, FILE_DIR_PATH
+import logging
 import time
 
 
 
-class CloneEntity:
-	def __init__(self, clonePosition, windowPosition, windowSize):
+class CloneEntity(Window):
+	def __init__(self, clonePosition):
+		super().__init__("Select your entity to clone (press 'Y' to select):")
 		self.clonePosition = clonePosition
-		self.windowPosition = windowPosition
-		self.windowSize = windowSize
 		self.active = True
 		self.currentSelection = 0
-
-	def drawScreen(self, screen, entities, components):
-		titleLine = 1
-		screen.print_at('Select your entity to clone (press "y" to select):', 1, titleLine, Screen.COLOUR_WHITE, Screen.COLOUR_BLUE)
-		i = 0
-		for entity in entities:
-			if self.currentSelection == i:
-				screen.print_at(str(i)+": "+str(entity), 1, titleLine+2+i, Screen.COLOUR_GREEN, Screen.COLOUR_BLUE)
-			else:
-				screen.print_at(str(i)+": "+str(entity), 1, titleLine+2+i, Screen.COLOUR_WHITE, Screen.COLOUR_BLUE)
-			i += 1
-		pass
-
-	def kill(self, parent):
-		parent.cloneEntity = None
-		self.active = False
 
 	def cloneEntity(self, position, entities, entity):
 		newEntity = entity.clone()
@@ -37,27 +22,19 @@ class CloneEntity:
 		entities.append(newEntity)
 		pass
 
-	def processInput(self, screen, entities, parent, components):
-		ev = screen.get_key()
-		if ev in (ord('W'), ord('w')):
-			self.currentSelection = max(0, self.currentSelection - 1)
-			return
-		if ev in (ord('S'), ord('s')):
-			self.currentSelection = min(len(entities), self.currentSelection + 1)
-			return
-		if ev in (ord('Y'), ord('y')):
-			self.cloneEntity(self.clonePosition, entities, entities[self.currentSelection])
-			self.kill(parent)
-			return
-		if ev in (ord('Q'), ord('q')):	# KILL ITSELF IF 'Q' IS PRESSED
-			self.kill(parent)
-			return
-		pass
+	def performAction(self, options, option, parentGameEntity):
+		self.cloneEntity(self.clonePosition, options, option)
+		self.kill(parentGameEntity)
 
-	def update(self, screen, entities, parent, components):
-		while self.active:
-			self.processInput(screen, entities, parent, components)
-			self.drawScreen(screen, entities, components)
-			screen.refresh()
-			time.sleep(GLOBAL_SLEEP_TIME)
-			screen.clear_buffer(fg=Screen.COLOUR_WHITE, attr=Screen.A_NORMAL, bg=Screen.COLOUR_BLUE)
+def saveFile(entities):
+	logging.debug("Start saving file.")
+	filepath = None
+	for entity in entities:
+		if entity.definition.format == "WorldFileEntity":
+			filepath = entity.definition.value
+			nodes = []
+			for entity in entities:
+				nodes.append(entity.toNode())
+			logging.debug("World saved to file "+str(filepath+"."))
+			return writeNodesToXML(FILE_DIR_PATH+"/"+filepath, nodes)
+	return None

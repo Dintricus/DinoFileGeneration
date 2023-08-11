@@ -1,1 +1,69 @@
-<xml><factory name="Game Entity Generator" description="This is the factory used to generate game entities" format="GameFactory" value="GameEntity"><factory name="GameObjectComponent" description="" format="GameFactory" value="GameObjectComponent"><definition name="asciiRepresentation" description="" format="string" value="cube" /><definition name="shape" description="" format="string" value="cube" /><definition name="position" description="" format="Vector3" value="0,0,0" /><definition name="size" description="" format="Vector3" value="1,1,1" /><definition name="name" description="" format="string" value="Test character" /><definition name="active" description="" format="bool" value="true" /></factory><factory name="Camera Movement Input Component Raw" description="" format="GameFactory" value="CameraMovementInputComponentRaw" /><factory name="Mouse Selection Input Component" description="" format="GameFactory" value="MouseSelectionInputComponent"><definition name="targetTag" description="" format="string" value="" /></factory><factory name="Force Tag Component" description="" format="GameFactory" value="ForceTagComponent"><definition name="targetTag" description="" format="string" value="" /></factory><factory name="Selected Handler Component" description="" format="GameFactory" value="SelectedHandlerComponent" /><factory name="MapMakerInputComponent" description="This is used only for map creation!" format="GameFactory" value="MapMakerInputComponent"><definition name="speed" description="" format="int" value="" /></factory><factory name="AsciiMapInformationComponent" description="This is used only for map creation!" format="GameFactory" value="AsciiMapInformationComponent" /></factory><entity name="Charlie the Cube" description="This is a test cube." format="GameEntity" value="GameEntity"><component name="GameObjectComponent" description="" format="GameObjectComponent" value="GameObjectComponent"><definition name="asciiRepresentation" description="" format="string" value="TEST" /><definition name="shape" description="" format="string" value="cube" /><definition name="position" description="" format="Vector3" value="0,0,0" /><definition name="size" description="" format="Vector3" value="1,1,1" /><definition name="name" description="" format="string" value="Test character" /><definition name="active" description="" format="bool" value="true" /></component><component name="Force Tag Component" description="" format="ForceTagComponent" value="ForceTagComponent"><definition name="targetTag" description="" format="string" value="selectable" /></component><component name="Selected Handler Component" description="" format="SelectedHandlerComponent" value="SelectedHandlerComponent" /></entity><entity name="Player" description="Responsible for input and output handling from the player" format="GameEntity" value="GameEntity"><component name="CameraMovementInputComponentRaw" description="CameraMovementInputComponentRaw" format="CameraMovementInputComponentRaw" value="CameraMovementInputComponentRaw" /><component name="GameObjectComponent" description="" format="GameObjectComponent" value="GameObjectComponent"><definition name="asciiRepresentation" description="" format="string" value="NOTHING" /><definition name="shape" description="" format="string" value="none" /><definition name="asciiRepresentation" description="" format="string" value="TEST" /><definition name="position" description="" format="Vector3" value="0,0,0" /><definition name="size" description="" format="Vector3" value="0,0,0" /><definition name="name" description="" format="string" value="Player" /><definition name="active" description="" format="bool" value="true" /></component><component name="MouseSelectionInputComponent" description="MouseSelectionInputComponent" format="MouseSelectionInputComponent" value="MouseSelectionInputComponent"><definition name="targetTag" description="" format="string" value="selectable" /></component></entity><entity name="Caroline the cursor" description="This is the cursor used for ascii map creation" format="GameEntity" value="GameEntity"><component name="GameObjectComponent" description="" format="GameObjectComponent" value="GameObjectComponent"><definition name="asciiRepresentation" description="" format="string" value="CURSOR" /><definition name="shape" description="" format="string" value="cube" /><definition name="position" description="" format="Vector3" value="1,1,1" /><definition name="size" description="" format="Vector3" value="1,1,1" /><definition name="name" description="" format="string" value="Cursor" /><definition name="active" description="" format="bool" value="true" /></component><mapMakerComponent name="MapMakerInputComponent" description="This is used only for map creation!" format="MapMakerInputComponent" value="MapMakerInputComponent"><definition name="speed" description="" format="int" value="1" /></mapMakerComponent><mapMakerComponent name="AsciiMapInformationComponent" description="This is used only for map creation!" format="AsciiMapInformationComponent" value="AsciiMapInformationComponent" /></entity></xml>
+<xml>
+	<factory description="This is a description for my test world." format="GameFactory" name="My Test World" value="WorldFileEntity"/>
+	<factory description="This is the factory used to generate game entities" format="GameFactory" name="Game Entity Generator" value="GameEntity">
+		<factory description="" format="GameFactory" name="GameObjectComponent" value="GameObjectComponent">
+			<definition description="" format="string" name="asciiRepresentation" value="cube"/>
+			<definition description="" format="string" name="shape" value="cube"/>
+			<definition description="" format="Vector3" name="position" value="0,0,0"/>
+			<definition description="" format="Vector3" name="size" value="1,1,1"/>
+			<definition description="" format="string" name="name" value="Test character"/>
+			<definition description="" format="bool" name="active" value="true"/>
+		</factory>
+		<factory description="" format="GameFactory" name="Camera Movement Input Component Raw" value="CameraMovementInputComponentRaw"/>
+		<factory description="" format="GameFactory" name="Mouse Selection Input Component" value="MouseSelectionInputComponent">
+			<definition description="" format="string" name="targetTag" value=""/>
+		</factory>
+		<factory description="" format="GameFactory" name="Force Tag Component" value="ForceTagComponent">
+			<definition description="" format="string" name="targetTag" value=""/>
+		</factory>
+		<factory description="" format="GameFactory" name="Selected Handler Component" value="SelectedHandlerComponent"/>
+		<factory description="This is used only for map creation!" format="GameFactory" name="MapMakerInputComponent" value="MapMakerInputComponent">
+			<definition description="" format="int" name="speed" value=""/>
+		</factory>
+		<factory description="This is used only for map creation!" format="GameFactory" name="AsciiMapInformationComponent" value="AsciiMapInformationComponent"/>
+	</factory>
+	<entity description="This is a description for my test world." format="WorldFileEntity" name="My Test World" value="test.xml"/>
+	<entity description="This is a test cube." format="GameEntity" name="Charlie the Cube" value="GameEntity">
+		<component description="" format="GameObjectComponent" name="GameObjectComponent" value="GameObjectComponent">
+			<definition description="" format="string" name="asciiRepresentation" value="TEST"/>
+			<definition description="" format="string" name="shape" value="cube"/>
+			<definition description="" format="Vector3" name="position" value="0,0,0"/>
+			<definition description="" format="Vector3" name="size" value="1,1,1"/>
+			<definition description="" format="string" name="name" value="Test character"/>
+			<definition description="" format="bool" name="active" value="true"/>
+		</component>
+		<component description="" format="ForceTagComponent" name="Force Tag Component" value="ForceTagComponent">
+			<definition description="" format="string" name="targetTag" value="selectable"/>
+		</component>
+		<component description="" format="SelectedHandlerComponent" name="Selected Handler Component" value="SelectedHandlerComponent"/>
+	</entity>
+	<entity description="Responsible for input and output handling from the player" format="GameEntity" name="Player" value="GameEntity">
+		<component description="CameraMovementInputComponentRaw" format="CameraMovementInputComponentRaw" name="CameraMovementInputComponentRaw" value="CameraMovementInputComponentRaw"/>
+		<component description="" format="GameObjectComponent" name="GameObjectComponent" value="GameObjectComponent">
+			<definition description="" format="string" name="asciiRepresentation" value="NOTHING"/>
+			<definition description="" format="string" name="shape" value="none"/>
+			<definition description="" format="string" name="asciiRepresentation" value="TEST"/>
+			<definition description="" format="Vector3" name="position" value="0,0,0"/>
+			<definition description="" format="Vector3" name="size" value="0,0,0"/>
+			<definition description="" format="string" name="name" value="Player"/>
+			<definition description="" format="bool" name="active" value="true"/>
+		</component>
+		<component description="MouseSelectionInputComponent" format="MouseSelectionInputComponent" name="MouseSelectionInputComponent" value="MouseSelectionInputComponent">
+			<definition description="" format="string" name="targetTag" value="selectable"/>
+		</component>
+	</entity>
+	<entity description="This is the cursor used for ascii map creation" format="GameEntity" name="Caroline the cursor" value="GameEntity">
+		<component description="" format="GameObjectComponent" name="GameObjectComponent" value="GameObjectComponent">
+			<definition description="" format="string" name="asciiRepresentation" value="CURSOR"/>
+			<definition description="" format="string" name="shape" value="cube"/>
+			<definition description="" format="Vector3" name="position" value="1,1,1"/>
+			<definition description="" format="Vector3" name="size" value="1,1,1"/>
+			<definition description="" format="string" name="name" value="Cursor"/>
+			<definition description="" format="bool" name="active" value="true"/>
+		</component>
+		<mapMakerComponent description="This is used only for map creation!" format="MapMakerInputComponent" name="MapMakerInputComponent" value="MapMakerInputComponent">
+			<definition description="" format="int" name="speed" value="1"/>
+		</mapMakerComponent>
+		<mapMakerComponent description="This is used only for map creation!" format="AsciiMapInformationComponent" name="AsciiMapInformationComponent" value="AsciiMapInformationComponent"/>
+	</entity>
+</xml>

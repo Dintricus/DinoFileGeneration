@@ -76,8 +76,9 @@ class Component:
                     CAMERA_POINT.x -= int(self.getProperty("speed").value)
                     return
                 if ev in (ord('C'), ord('c')):
-                    #TODO NEW ENTITY OPTION SCREEN
-                    self.cloneEntity = CloneEntity(screenCenter, Point(0, 0), Point(math.floor(screen.width / SCALE), math.floor(screen.height / SCALE)))
+                    self.cloneEntity = CloneEntity(screenCenter)
+                if ev in (ord('G'), ord('G')):
+                    saveFile(entities)
                 if ev in (ord('Q'), ord('q')):
                     screen.close()
                     exit()
@@ -168,7 +169,7 @@ class Entity:
             clonedComponents.append(component.clone())
         result = Entity(self.definition.clone(), clonedComponents)
         return result
-
+    
 
 def getFactoryFromEntityNode(factories, entityNode):
     for factory in factories:
